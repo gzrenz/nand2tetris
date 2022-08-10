@@ -42,7 +42,7 @@ class Parser:
         else: 
             self.currentline = line 
             
-
+    # Return C_INSTRUCTION if comp, 
     def instructionType(self): 
         if self.labelPattern.search(self.currentline): 
             self.instructionType = 'L_INSTRUCTION'

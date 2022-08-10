@@ -1,4 +1,5 @@
-def dest(): 
+def dest():
+    """Returns the binary code of the dest mnemonic""" 
     return 
 
 def comp(): 

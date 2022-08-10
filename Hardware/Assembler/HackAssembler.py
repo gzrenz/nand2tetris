@@ -40,8 +40,6 @@ class Assembler:
         """Returns the address associated with the symbol"""
         return 
 
-    def stringToBits(): 
-        return 
 
     # Maps the asm labels to hack ROM address 
     def firstPass(self): 
@@ -52,10 +50,28 @@ class Assembler:
             parser.advance() 
             if parser.instructionType() == 'L_INSTRUCTION':
                 self.symbolDict[parser.symbol()] = self.lineNum + 1
-            lineNum += 1 
+            self.lineNum += 1 
 
-    def secondPass(): 
+    def secondPass(self): 
         parser = Parser(self.file)
+        while True: 
+            if not parser.hasMoreLines(): 
+                break 
+            parser.advance() 
+            it = parser.instructionType() 
+            if it == 'L_INSTRUCTION': 
+                pass 
+            elif it == 'A_INSTRUCTION': 
+                s = parser.symbol() 
+                if s in self.symbolDict: 
+                    # convert to binary 
+                    self.writer.write(bin(int(self.symbolDict[s]))) 
+                else: 
+                    self.symbolDict[s] = self.lineNum
+                    self.writer.write(bin(int(self.symbolDict[s])))
+            
+            self.lineNum += 1 
+
         return 
 
 if '__main__' == __name__:
