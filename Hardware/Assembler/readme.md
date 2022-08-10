@@ -49,7 +49,7 @@ For each assembly instruction, the assembler
 ### Handling Symbols 
 The Hacke assembler is a two-pass assembler that reads the code twice, from start to end. In the first pass, the assembler builds a symbol table, adds all the label symbols to the table, and generates no code. In the second pass, the assembler handles the variables symbols and generates binary code, using the symbol table. 
 
-**Initialization**
+**Initialization**: initialize all the predefined symbols and their pre-allocated values. 
 
 **First pass**: keep track of line number. Line starts at 0, and increments whenever an instruction is encountered, but does not increment when label declaration is encountered, instead it maps the label into the symbol (line number + 1). 
 
