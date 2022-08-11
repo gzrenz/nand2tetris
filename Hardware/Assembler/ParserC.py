@@ -11,7 +11,7 @@ class Parser:
     compPattern = re.compile(r'0|1|D|M')
 
     def __init__(self, file):
-        self.file = open(file) 
+        self.file = file 
         return 
 
     # Checks if next line in file isn't empty
@@ -41,8 +41,9 @@ class Parser:
             self.advance() 
         else: 
             self.currentline = line 
+        self.currentline = self.currentline.strip() 
             
-    # Return C_INSTRUCTION if comp, 
+    # Return instruction type  
     def instructionType(self): 
         if self.labelPattern.search(self.currentline): 
             self.instructionType = 'L_INSTRUCTION'
@@ -54,13 +55,36 @@ class Parser:
             print('Instruction is undefined')
 
     def symbol(self):
-        return re.search('(\w)*', self.currentline).group()
+        """Return string for labels and address and int for constants. 
+            Exclusive for Addr and Label instructions"""
+        return re.search('(\w)*|(\d)*', self.currentline).group()
 
-    def dest(): 
-        return 
 
-    def comp(): 
-        return 
+    # For parsing dest = comp ; jump instructions 
+    # comp is mandatory 
+    # if dest is empty, '=' isn't included in asm program
+    # ^-^jump^--------^,';' ^----------------------------^
+    def dest(self): 
+        parsed = self.currentline.split('=') 
+        if len(parsed) > 1: 
+            parsed = parsed[0]
+            #remove whitespace and return
+            return parsed.replace(re.search('\W', parsed).group(), "")
+        else: 
+            return None
 
-    def jump(): 
-        return 
+    def comp(self): 
+        parsed = ''
+        if '=' in self.currentline: 
+            parsed = self.currentline.split('=')[1].strip()
+        else: # ';' in inst 
+            parsed = self.currentline.split(';')[0].strip() 
+        return parsed.replace(re.search('\W', parsed).group(), "")
+
+    def jump(self):  
+        parsed = self.currentline.split(';')
+        if len(parsed) > 1: 
+            parsed = parsed[1]
+            return parsed.replace(re.search('\W', parsed).group(), "")
+        else: 
+            return None 
