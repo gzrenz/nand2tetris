@@ -8,9 +8,8 @@ class Assembler:
 
     def __init__(self, dir): 
         # initialize file and writer objects 
-        path = str(dir) 
-        self.file = open(path)
-        self.writer = open(f'{path[:len(path)-4]}.hack', 'w')
+        self.path = str(dir) 
+        
 
         # initialize symbol table / dictionary 
         for i in range(16): 
@@ -47,38 +46,46 @@ class Assembler:
         """Returns the address associated with the symbol"""
         return self.symbolDict[symbol]
 
-    # Convenient method for line breaks 
-    def newLine(self): 
-        self.writer.write('\n')
-        return 
+    # Helper method for converting int to binary values 
+    def binary(self, num): 
+        result = bin(num)[2:].zfill(16)
+        return result 
 
     # Maps the asm labels to hack ROM address - handles pseudo instructions 
     def firstPass(self): 
         lineNum = -1 
-        parser = Parser(self.file)
+        reader = open(self.path)
+        parser = Parser(reader)
         while True: 
             if not parser.hasMoreLines(): 
                 break 
             parser.advance() 
-            if parser.instructionType() == 'L_INSTRUCTION':
-                self.symbolDict[parser.symbol()] = self.lineNum + 1
+            parser.instructionType() 
             lineNum += 1 
+            if parser.instType == 'L_INSTRUCTION':
+                self.addEntry(parser.symbol(), lineNum) 
+                # Label isn't part of hack code, so don't map a line number. This makes the added entry point to the next instruction. 
+                lineNum -= 1 
+            
 
     # Maps asm variables to hack RAM address - code generation 
     def secondPass(self): 
         # Create parser to go through each line 
-        parser = Parser(self.file)
+        reader = open(self.path)
+        parser = Parser(reader)
+        writer = open(f'{self.path[:len(self.path)-4]}.hack', 'w')
         # Start variable mapping at address 16 
         addr = 16
         i = 0
         while True: 
-            print(++i)
+            print(i)
+            i += 1
             # Iterate through the asm program until no more lines 
             if not parser.hasMoreLines(): 
                 break 
             parser.advance() 
-
-            it = parser.instructionType() 
+            parser.instructionType() 
+            it = parser.instType
             # Skip labels (done in first pass) 
             if it == 'L_INSTRUCTION': 
                 pass 
@@ -89,29 +96,33 @@ class Assembler:
 
                 # Handling constants - s is string of int 
                 if isinstance(s, int): 
-                    self.writer.write(bin(int(s)))
-                    self.newLine() 
+                    writer.write(self.binary(int(s)))
+                    writer.write('\n')
                 # Handling variables - s is string key 
                 else: 
-                    if s in self.symbolDict: 
-                        self.writer.write(bin(int(self.symbolDict[s]))) 
-                        self.newLine() 
+                    if self.contains(s): 
+                        writer.write(self.binary(int(self.symbolDict[s]))) 
+                        writer.write('\n')
                     # Map new variables - s is key and addr is value 
                     else: 
                         self.symbolDict[s] = addr 
-                        ++addr 
-                        self.writer.write(bin(int(self.symbolDict[s])))
-                        self.newLine() 
+                        addr += 1 
+                        writer.write(self.binary(int(self.symbolDict[s])))
+                        writer.write('\n')
             # currentline is C_INSTRUCTION
             else: 
+                writer.write('111')
+
                 destSymbol = parser.dest() 
                 compSymbol = parser.comp() 
                 jumpSymbol = parser.jump() 
 
-                self.writer.write(Code.dest(destSymbol))
-                self.writer.write(Code.comp(compSymbol)) 
-                self.writer.write(Code.jump(jumpSymbol)) 
-                self.newLine() 
+                writer.write(Code.dest(destSymbol))
+                writer.write(Code.comp(compSymbol)) 
+                writer.write(Code.jump(jumpSymbol)) 
+                writer.write('\n') 
+        reader.close() 
+        writer.close() 
         return 
 
 if __name__ == '__main__':

@@ -1,63 +1,59 @@
 from dis import Instruction
-import re 
+import re
+import string 
 class Parser: 
     """Parses the input into instructions and instructions into fields"""
 
     # Attributes 
     currentline = '' 
-    instructionType = ''
+    instType = ''
     labelPattern = re.compile(r'\((\w)*\)')
     addressPattern = re.compile(r'@(\w)*|@(\d)*')
     compPattern = re.compile(r'0|1|D|M')
+    ws = re.compile(r'\s+')
 
     def __init__(self, file):
-        self.file = file 
+        self.file = file
+        self.lines = file.readlines() 
+        # Remove whitespace and comments 
+        for i, line in enumerate(self.lines): 
+            if '//' in line: 
+                line = line.split('//', 1)[0] 
+            line = re.sub(self.ws, '', line)
+            self.lines[i] = line
+            
+        # Remove empty strings from queue 
+        while("" in self.lines): 
+            self.lines.remove("") 
         return 
 
     # Checks if next line in file isn't empty
     def hasMoreLines(self): 
-        pos = self.file.tell() 
-        line = self.file.readline()
-        if line: 
-            self.file.seek(pos) 
-            return True 
-        else: 
+        if not self.lines: 
             return False 
+        else: 
+            return True 
 
     # advances 
     def advance(self): 
-        line = self.file.readline() 
-        if "//" in line: 
-            tokens = line.split('//') 
-            if tokens[0] == '': 
-                if self.hasMoreLines: 
-                    self.advance() 
-            else: 
-                if re.search('\W', tokens[0]): 
-                    self.advance() 
-                else:
-                    self.currentline = tokens[0]
-        elif re.search('\W', line): 
-            self.advance() 
-        else: 
-            self.currentline = line 
-        self.currentline = self.currentline.strip() 
+        line = self.lines.pop(0) 
+        self.currentline = line 
             
     # Return instruction type  
     def instructionType(self): 
         if self.labelPattern.search(self.currentline): 
-            self.instructionType = 'L_INSTRUCTION'
+            self.instType = 'L_INSTRUCTION'
         elif self.addressPattern.search(self.currentline): 
-            self.instructionType = 'A_INSTRUCTION'
+            self.instType = 'A_INSTRUCTION'
         elif self.compPattern.search(self.currentline): 
-            self.instructionType = 'C_INSTRUCTION' 
+            self.instType = 'C_INSTRUCTION' 
         else: 
             print('Instruction is undefined')
 
     def symbol(self):
         """Return string for labels and address and int for constants. 
             Exclusive for Addr and Label instructions"""
-        return re.search('(\w)*|(\d)*', self.currentline).group()
+        return re.search('(\w+)|(\d+)', self.currentline).group()
 
 
     # For parsing dest = comp ; jump instructions 
@@ -69,7 +65,7 @@ class Parser:
         if len(parsed) > 1: 
             parsed = parsed[0]
             #remove whitespace and return
-            return parsed.replace(re.search('\W', parsed).group(), "")
+            return re.sub(self.ws, "", parsed)
         else: 
             return None
 
@@ -79,12 +75,12 @@ class Parser:
             parsed = self.currentline.split('=')[1].strip()
         else: # ';' in inst 
             parsed = self.currentline.split(';')[0].strip() 
-        return parsed.replace(re.search('\W', parsed).group(), "")
+        return re.sub(self.ws, "", parsed)
 
     def jump(self):  
         parsed = self.currentline.split(';')
         if len(parsed) > 1: 
             parsed = parsed[1]
-            return parsed.replace(re.search('\W', parsed).group(), "")
+            return re.sub(self.ws, "", parsed)
         else: 
             return None 
