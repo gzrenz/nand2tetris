@@ -65,6 +65,9 @@ class Assembler:
             parser.instructionType() 
             lineNum += 1 
             if parser.instType == 'L_INSTRUCTION':
+                if lineNum < 1000: 
+                    print(f"Symbol: {parser.symbol()} Line: {lineNum}")
+                    print(lineNum)
                 self.addEntry(parser.symbol(), lineNum) 
                 # Label isn't part of hack code, so don't map a line number. This makes the added entry point to the next instruction. 
                 lineNum -= 1 
@@ -73,7 +76,6 @@ class Assembler:
 
     # Maps asm variables to hack RAM address - code generation 
     def secondPass(self): 
-        i = -1 
         # Create parser to go through each line 
         reader = open(self.path)
         parser = Parser(reader)

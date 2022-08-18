@@ -8,8 +8,8 @@ class Parser:
     currentline = '' 
     instType = ''
     lines = []
-    labelPattern = re.compile(r'\((\w)+\)|\((\w)+.(\w)+')
-    addressPattern = re.compile(r'@(\w)+|@(\d)+')
+    labelPattern = re.compile(r'\(\w+\W\w+\W\w+\)|\(\w+.\w+\)|\((\w)+\)')
+    addressPattern = re.compile(r'@w+.w+|@\w+|@\d+')
     compPattern = re.compile(r'0|1|D|M')
     ws = re.compile(r'\s+')
 
@@ -54,7 +54,8 @@ class Parser:
     def symbol(self):
         """Return string for labels and address and int for constants. 
             Exclusive for Addr and Label instructions"""
-        return re.search('\w+.\w+|\w+|\d+', self.currentline).group()
+        return re.search('\w+\W\w+\W\w+|\w+.\w+|\w+|\d+', self.currentline).group()
+        
        
 
 
