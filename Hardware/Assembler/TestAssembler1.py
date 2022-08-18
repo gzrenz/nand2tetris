@@ -39,19 +39,19 @@ from HackAssembler import Assembler
 #     def test_compare(self):
 #         self.assertEqual(self.resultContent, self.compareContent) 
 
-class HackAssemblerTestPong(unittest.TestCase): 
-    assembler = Assembler('data/pong/Pong.asm')
-    compareFile = open('data/pong/PongTest.hack') 
+# class HackAssemblerTestPong(unittest.TestCase): 
+#     assembler = Assembler('data/pong/Pong.asm')
+#     compareFile = open('data/pong/PongTest.hack') 
 
-    resultFile = open('data/pong/Pong.hack') 
+#     resultFile = open('data/pong/Pong.hack') 
 
-    compareContent = compareFile.read() 
-    resultContent = resultFile.read() 
+#     compareContent = compareFile.read() 
+#     resultContent = resultFile.read() 
 
-    print(assembler.symbolDict) 
+#     print(assembler.symbolDict) 
 
-    def test_compare(self):
-        self.assertEqual(self.resultContent, self.compareContent)  
+#     def test_compare(self):
+#         self.assertEqual(self.resultContent, self.compareContent)  
 
 
     # With Symbolic References 
@@ -59,7 +59,7 @@ class HackAssemblerTestPong(unittest.TestCase):
 #     assembler = Assembler('data/max/MaxL.asm')
 #     compareFile = open('data/max/MaxLTest.hack')  
 
-#     resultFile = open('data/add/Add.hack') 
+#     resultFile = open('data/max/MaxL.hack') 
 
 #     compareContent = compareFile.read() 
 #     resultContent = resultFile.read() 
@@ -71,7 +71,7 @@ class HackAssemblerTestPong(unittest.TestCase):
 #     assembler = Assembler('data/rect/RectL.asm')
 #     compareFile = open('data/rect/RectLTest.hack')  
 
-#     resultFile = open('data/add/Add.hack') 
+#     resultFile = open('data/rect/RectL.hack') 
 
 #     compareContent = compareFile.read() 
 #     resultContent = resultFile.read() 
@@ -79,17 +79,17 @@ class HackAssemblerTestPong(unittest.TestCase):
 #     def test_compare(self):
 #         self.assertEqual(self.resultContent, self.compareContent) 
 
-# class HackAssemblerTestPongL(unittest.TestCase): 
-#     assembler = Assembler('data/pong/PongL.asm')
-#     compareFile = open('data/pong/PongLTest.hack')  
+class HackAssemblerTestPongL(unittest.TestCase): 
+    assembler = Assembler('data/pong/PongL.asm')
+    compareFile = open('data/pong/PongLTest.hack')  
 
-#     resultFile = open('data/add/Add.hack') 
+    resultFile = open('data/pong/PongL.hack') 
 
-#     compareContent = compareFile.read() 
-#     resultContent = resultFile.read() 
+    compareContent = compareFile.read() 
+    resultContent = resultFile.read() 
 
-#     def test_compare(self):
-#         self.assertEqual(self.resultContent, self.compareContent) 
+    def test_compare(self):
+        self.assertEqual(self.resultContent, self.compareContent) 
 
 if __name__ == '__main__': 
     unittest.main()     
