@@ -1,7 +1,8 @@
-num = 45
+from ParserC import Parser 
 
-print(bin(45))
- 
-binary= bin(num)[2:].zfill(16)
- 
-print(binary)
+parser = Parser(open('data/pong/Pong.asm')) 
+parser.currentline = '(ball.dispose)' 
+print(parser.instructionType()) 
+parser.currentline = '(@asldkjfs)' 
+print(parser.instructionType()) 
+

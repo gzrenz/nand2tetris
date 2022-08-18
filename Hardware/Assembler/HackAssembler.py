@@ -21,6 +21,9 @@ class Assembler:
         self.symbolDict['THAT'] = 4
         self.symbolDict['SCREEN'] = 16384
         self.symbolDict['KBD'] = 24576
+
+        self.run() 
+
         return 
 
     def run(self): 
@@ -29,7 +32,6 @@ class Assembler:
         self.secondPass() 
 
         # terminate 
-        self.writer.close() 
         print("Compilation Finished")
         return 
     
@@ -66,20 +68,19 @@ class Assembler:
                 self.addEntry(parser.symbol(), lineNum) 
                 # Label isn't part of hack code, so don't map a line number. This makes the added entry point to the next instruction. 
                 lineNum -= 1 
+        reader.close() 
             
 
     # Maps asm variables to hack RAM address - code generation 
     def secondPass(self): 
+        i = -1 
         # Create parser to go through each line 
         reader = open(self.path)
         parser = Parser(reader)
         writer = open(f'{self.path[:len(self.path)-4]}.hack', 'w')
         # Start variable mapping at address 16 
         addr = 16
-        i = 0
         while True: 
-            print(i)
-            i += 1
             # Iterate through the asm program until no more lines 
             if not parser.hasMoreLines(): 
                 break 
@@ -95,7 +96,7 @@ class Assembler:
                 s = parser.symbol() 
 
                 # Handling constants - s is string of int 
-                if isinstance(s, int): 
+                if s.isnumeric(): 
                     writer.write(self.binary(int(s)))
                     writer.write('\n')
                 # Handling variables - s is string key 
@@ -112,13 +113,12 @@ class Assembler:
             # currentline is C_INSTRUCTION
             else: 
                 writer.write('111')
-
                 destSymbol = parser.dest() 
                 compSymbol = parser.comp() 
                 jumpSymbol = parser.jump() 
 
-                writer.write(Code.dest(destSymbol))
                 writer.write(Code.comp(compSymbol)) 
+                writer.write(Code.dest(destSymbol))
                 writer.write(Code.jump(jumpSymbol)) 
                 writer.write('\n') 
         reader.close() 

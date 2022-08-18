@@ -28,14 +28,13 @@ class ParserTestCase(unittest.TestCase):
         while True: 
             if not parser.hasMoreLines(): 
                 break 
-            parser.advance() 
-            parser.instructionType() 
-            if parser.instType == 'L_INSTRUCTION': 
-                self.assertEqual(parser.instType, 'L_INSTRUCTION')
+            parser.advance()  
+            if parser.instructionType == 'L_INSTRUCTION': 
                 extracted.append(parser.symbol())
         self.assertIn('OUTPUT_FIRST', extracted)
         self.assertIn('OUTPUT_D', extracted)
         self.assertIn('INFINITE_LOOP', extracted)
+        print(f"Extracted: {extracted}")
         parser.file.close() 
 
     def test_random(self): 

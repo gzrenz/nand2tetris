@@ -48,7 +48,8 @@ d_dict = {
     'AM' : '101', 
     'DM' : '011', 
     'AD' : '110', 
-    'ADM': '111' 
+    'ADM': '111', 
+    'MD' : '011'
 }
 j_dict = { 
     None : '000',
@@ -56,21 +57,24 @@ j_dict = {
     'JGT': '001', 
     'JLT': '100', 
     'JEQ': '010', 
-    'JQE': '011', 
+    'JGE': '011', 
     'JLE': '110', 
     'JNE': '101' 
 }
 
 # Return binary string for C_INSTRUCTION
 def dest(symbol):
+    # print(f"Symbol: {symbol}, Value: {d_dict[symbol]}")
     return d_dict[symbol]
 
 def comp(symbol): 
-    print(symbol)
     if 'M' in symbol: 
+        # print(f"Symbol: {symbol}, Value: {c_dict1[symbol]}")
         return c_dict1[symbol] 
     else: 
+        # print(f"Symbol: {symbol}, Value: {c_dict0[symbol]}")
         return c_dict0[symbol] 
 
 def jump(symbol): 
+    # print(f"Symbol: {symbol}, Value: {j_dict[symbol]}")
     return j_dict[symbol]

@@ -7,13 +7,13 @@ class Parser:
     # Attributes 
     currentline = '' 
     instType = ''
-    labelPattern = re.compile(r'\((\w)*\)')
-    addressPattern = re.compile(r'@(\w)*|@(\d)*')
+    lines = []
+    labelPattern = re.compile(r'\((\w)+\)|\((\w)+.(\w)+')
+    addressPattern = re.compile(r'@(\w)+|@(\d)+')
     compPattern = re.compile(r'0|1|D|M')
     ws = re.compile(r'\s+')
 
     def __init__(self, file):
-        self.file = file
         self.lines = file.readlines() 
         # Remove whitespace and comments 
         for i, line in enumerate(self.lines): 
@@ -46,14 +46,16 @@ class Parser:
         elif self.addressPattern.search(self.currentline): 
             self.instType = 'A_INSTRUCTION'
         elif self.compPattern.search(self.currentline): 
-            self.instType = 'C_INSTRUCTION' 
+            self.instType = 'C_INSTRUCTION'
         else: 
+            print(self.instType)
             print('Instruction is undefined')
 
     def symbol(self):
         """Return string for labels and address and int for constants. 
             Exclusive for Addr and Label instructions"""
-        return re.search('(\w+)|(\d+)', self.currentline).group()
+        return re.search('\w+.\w+|\w+|\d+', self.currentline).group()
+       
 
 
     # For parsing dest = comp ; jump instructions 
